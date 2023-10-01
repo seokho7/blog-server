@@ -6,12 +6,13 @@ import axios from 'axios';
 import { DataBaseHealthCheckService } from 'src/health-check/health-check.service';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
+import { smsResStep } from '../types/response';
 
 @Injectable()
 export class Sms {
   constructor(
+    @InjectRedis() private readonly redis: Redis,
     private readonly databaseHealthCheckService: DataBaseHealthCheckService,
-    @InjectRedis() private readonly redis: Redis
   ) {}
 
   async createSignature(): Promise<string> {
@@ -29,17 +30,21 @@ export class Sms {
   }
 
   async sendSms(userPhone: string): Promise<any> {
-    console.log(userPhone);
+    let resResult: smsResStep = {
+      resState : false
+    };
+
     if (userPhone.length === 11) {
       const redisState = await this.databaseHealthCheckService.redisCheck();
       if(redisState.status === 'up'){
         const doubleCheck = await this.validateSms(userPhone);
+        console.log(new Date())
 
         if(!doubleCheck){
           const codeMin = 100000; 
           const codeMax = 999999; 
           const authRandomNum = Math.floor(Math.random() * (codeMax - codeMin + 1)) + codeMin;
-          const cacheTime = 1000 * 60 * 3
+          const cacheTime = 180
           await this.redis.setex(String(userPhone), cacheTime, authRandomNum);
           const headers = {
             'Content-Type': 'application/json; charset=utf-8',
@@ -60,25 +65,31 @@ export class Sms {
             ],
           };
           const smsUrl = `https://sens.apigw.ntruss.com/sms/v2/services/${process.env.NAVER_SMS_SERVICE_ID}/messages`;
-          // await axios
+          // const result = await axios
           //   .post(smsUrl, reqBody, { headers })
           //   .then(async (res) => {
-          //     console.log(res);
+          //     resResult.resState = true;
+          //     return resResult;
           //   })
           //   .catch((err) => {
-          //     console.error(err.response.data);
-          //     // throw new InternalServerErrorException();
+          //     resResult.failStep = 'reTry'
+          //     return resResult;
           //   });
-          return true;
+            
+          // return result;
+          resResult.resState = true;
+          return resResult
         }else{
-          return false;
+          resResult.failStep = 'fastTry'
+          return resResult;
         }
       }else{
-        // 레디스 실패시 쿠키에 여기
-        return false;
+        resResult.failStep = 'redisOff'
+        return resResult;
       }
     } else {
-      return false;
+      resResult.failStep = "reSubmit"
+      return resResult;
     }
   }
 

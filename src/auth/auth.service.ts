@@ -9,11 +9,11 @@ export class AuthService {
   //  가입하기
   async register(userDto: UserSignUpDto): Promise<boolean> {
     const user = await this.userService.findByEmail(userDto['USER_EMAIL']);
-    if (user) {
-      throw new BadRequestException('해당 유저가 이미 있습니다.');
-    }
-    const encryptedPw = bcrypt.hashSync(userDto['USER_PW'], 10);
+    const userNickname = await this.userService.findByNinkname(userDto["USER_NICKNAME"]);
+    if(user) throw new BadRequestException('U0001');
+    if(userNickname) throw new BadRequestException('U0002');
 
+    const encryptedPw = bcrypt.hashSync(userDto['USER_PW'], 10);
     try {
       await this.userService.signUp({
         ...userDto,
@@ -48,4 +48,5 @@ export class AuthService {
   async hashString(targetString: string): Promise<string> {
     return bcrypt.hashSync(targetString, 10);
   }
+
 }

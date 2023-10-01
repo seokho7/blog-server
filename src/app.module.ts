@@ -31,11 +31,14 @@ import { HttpModule } from '@nestjs/axios';
     }),
     RedisModule.forRoot({
       readyLog: true,
+      errorLog: true,
       config: {
         host: process.env.REDIS_HOST,
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
+
       },
+
     }),
     AuthModule,
     TerminusModule,

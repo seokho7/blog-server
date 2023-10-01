@@ -19,6 +19,7 @@ import {
   LocalAuthGuard,
 } from './auth.guard';
 import { Sms } from './auth.sms';
+import { smsResStep } from 'src/types/response';
 
 @Controller('auth')
 export class AuthController {
@@ -71,11 +72,9 @@ export class AuthController {
 
   @Post('/sendCode')
   async sendCode(@Body() req, @Res() res) {
-    setTimeout(async () => {
-      const smsState = await this.sms.sendSms(req.USER_PHONE);
-      smsState ? res.send(true) : res.send(false);
-      // res.send(true)
-    }, 500);
+    const smsState: smsResStep = await this.sms.sendSms(req.USER_PHONE);
+    res.send(smsState);
+      // res.send(JSON.stringify(smsState))
   }
 
   @Post('/validateCode')

@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entity/user.entity';
@@ -31,6 +31,17 @@ export class UserService {
       where: { USER_EMAIL: userEmail },
     });
 
+    return result;
+  }
+
+  // 유저 계정 수 검사
+  async maximumJoinCheck(userPhone: string) {
+    const result = await this.userRepository.find({
+      where: { USER_PHONE: userPhone}
+    })
+    if(result.length > 2){
+      throw new BadRequestException('계정은 최대 2개까지 만들 수 있습니다.');
+    }
     return result;
   }
 

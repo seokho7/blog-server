@@ -16,13 +16,15 @@ export class DataBaseHealthCheckService {
         host: process.env.DATABASE_HOST,
         user: process.env.DATABASE_USER_NAME,
         password: process.env.DATABASE_PASSWORD,
-      });
-      await client.execute('SELECT 1');
+      })
 
+      await client.execute('SELECT 1');
+      client.end();
       return { status: 'up' };
     } catch (err) {
       return { status: 'down', message: err.message };
     }
+    
   }
 
   @HealthCheck()
