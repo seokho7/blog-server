@@ -10,9 +10,11 @@ export class AuthService {
   async register(userDto: UserSignUpDto): Promise<boolean> {
     const user = await this.userService.findByEmail(userDto['USER_EMAIL']);
     const userNickname = await this.userService.findByNinkname(userDto["USER_NICKNAME"]);
+    const userPhone = await this.userService.findByPhone(userDto['USER_PHONE']);
     if(user) throw new BadRequestException('U0001');
     if(userNickname) throw new BadRequestException('U0002');
-
+    if(userPhone) throw new BadRequestException('U0003');
+    
     const encryptedPw = bcrypt.hashSync(userDto['USER_PW'], 10);
     try {
       await this.userService.signUp({

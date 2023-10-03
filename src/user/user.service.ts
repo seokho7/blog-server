@@ -34,14 +34,12 @@ export class UserService {
     return result;
   }
 
-  // 유저 계정 수 검사
-  async maximumJoinCheck(userPhone: string) {
-    const result = await this.userRepository.find({
-      where: { USER_PHONE: userPhone}
+  // 유저 핸드폰 중복 검사
+  async findByPhone(userPhone: string): Promise<UserEntity> {
+    const result = await this.userRepository.findOne({
+      where: { USER_PHONE: userPhone},
     })
-    if(result.length > 2){
-      throw new BadRequestException('계정은 최대 2개까지 만들 수 있습니다.');
-    }
+
     return result;
   }
 

@@ -64,7 +64,7 @@ export class Sms {
               },
             ],
           };
-          const smsUrl = `https://sens.apigw.ntruss.com/sms/v2/services/${process.env.NAVER_SMS_SERVICE_ID}/messages`;
+          // const smsUrl = `https://sens.apigw.ntruss.com/sms/v2/services/${process.env.NAVER_SMS_SERVICE_ID}/messages`;
           // const result = await axios
           //   .post(smsUrl, reqBody, { headers })
           //   .then(async (res) => {
@@ -76,7 +76,6 @@ export class Sms {
           //     return resResult;
           //   });
             
-          // return result;
           resResult.resState = true;
           return resResult
         }else{
