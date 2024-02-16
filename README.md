@@ -1,4 +1,7 @@
-블로그 연습 서버
+# NestJS로 만드는 블로그
+https://github.com/nuts-playground/server-eric
 
-- commit: 게시판 서비스 만들기 전 SQL 연습 진행중   
-- 2023.02.11 - 새로운 소스로 덮어쓰기 필요
+## 1. 목표
+- NestJS 공부
+- RDB 공부
+- OOP 습관화
